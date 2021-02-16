@@ -27,7 +27,6 @@ router.post('/api/users/signin', [
         }
 
         const isAuthentic = await PasswordManager.compare(user.password, password);
-        console.log(`isAthentic: ${isAuthentic}`);
 
         if (!isAuthentic) {
             throw new BadRequestError('Invalid credentials');
