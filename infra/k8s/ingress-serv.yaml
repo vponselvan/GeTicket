@@ -1,11 +1,12 @@
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: ingress-srv
   annotations:
-    kubernetes.io/ingress.class: nginx
+    #kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
+  ingressClassName: nginx
   rules:
     - host: geticket.com
       http:
@@ -13,7 +14,5 @@ spec:
           - path: /api/users/?(.*)
             pathType: Prefix
             backend:
-              service:
-                name: auth-serv
-                port: 
-                  number: 3000
+              serviceName: auth-serv
+              servicePort: 3000

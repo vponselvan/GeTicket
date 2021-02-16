@@ -5,10 +5,12 @@ deploy:
     manifests:
       - ./infra/k8s/*
 build:
-  local:
-    push: false #To turn off docker hub default push
+  # local:
+  #   push: false #To turn off docker hub default push
+  googleCloudBuild:
+    projectId: geticketapp
   artifacts:
-    - image: scarvps/auth
+    - image: us.gcr.io/geticketapp/auth
       context: auth
       docker:
         dockerfile: Dockerfile
