@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { UserPayload } from '../models/user-payload';
+
+interface UserPayload {
+    id: string;
+    email: string;
+}
 
 declare global {
     namespace Express {
