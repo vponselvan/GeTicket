@@ -1,10 +1,11 @@
-import { PasswordManager } from './../services/password-manager';
-import { BadRequestError } from './../errors/bad-request-error';
-import { User } from './../models/user';
-import { validateRequest } from './../middlewares/validate-request';
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
+
+import { PasswordManager } from './../services/password-manager';
+import { BadRequestError, validateRequest } from '@geticket/common';
+import { User } from './../models/user';
+
 
 const router = express.Router();
 
