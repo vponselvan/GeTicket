@@ -21,7 +21,7 @@ const start = async () => {
         console.log(err);
     }
     app.listen(3000, () => {
-        console.log('Auth listening at 3000!!');
+        console.log('Tickets listening at 3000!!');
     });
 }
 
