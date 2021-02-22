@@ -1,3 +1,4 @@
+import { natsWrapper } from './../../nats-wrapper';
 import request from 'supertest';
 import { app } from '../../app';
 import { createTicket } from './../../test/create-ticket';
@@ -116,4 +117,29 @@ it('updates the ticket', async () => {
 
     expect(ticketResponse.body.title).toEqual(title);
     expect(ticketResponse.body.price).toEqual(50);
+});
+
+it('publishes an event when the ticket is updated', async () => {
+    const cookie = getCookie();
+    const title = 'Ticket to Ride';
+
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title,
+            price: 20
+        })
+        .expect(201);
+
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title,
+            price: 50
+        })
+        .expect(200);
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

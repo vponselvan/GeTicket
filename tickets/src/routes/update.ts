@@ -3,6 +3,8 @@ import { body } from 'express-validator';
 import { NotFoundError, validateRequest, requireAuth, NotAuthorizedError } from '@geticket/common';
 import mongoose from 'mongoose';
 import { Ticket } from '../models/ticket';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -37,6 +39,13 @@ router.put('/api/tickets/:id', requireAuth, [
             price: req.body.price
         });
         await ticket.save();
+
+        await new TicketUpdatedPublisher(natsWrapper.client).publish({
+            title: ticket.title,
+            price: ticket.price,
+            id: ticket.id,
+            userId: ticket.userId
+        });
 
         res.status(200).send(ticket);
     });
