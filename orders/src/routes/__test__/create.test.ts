@@ -1,3 +1,4 @@
+import { natsWrapper } from './../../nats-wrapper';
 import request from 'supertest';
 import { app } from '../../app';
 import { Order, OrderStatus } from '../../models/order';
@@ -42,13 +43,27 @@ it('reserves a ticket', async () => {
     });
     await ticket.save();
 
-    const response = await request(app)
+    await request(app)
         .post('/api/orders')
         .set('Cookie', getCookie())
         .send({ ticketId: ticket.id })
         .expect(201);
 });
 
-it.todo('emit an event');
+it('emits an event when an order is created', async () => {
+    const ticket = new Ticket({
+        title: 'Ticket to Ride',
+        price: 50
+    });
+    await ticket.save();
+
+    await request(app)
+        .post('/api/orders')
+        .set('Cookie', getCookie())
+        .send({ ticketId: ticket.id })
+        .expect(201);
+
+    expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
 
 

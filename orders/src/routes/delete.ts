@@ -2,6 +2,8 @@ import { requireAuth, NotFoundError, NotAuthorizedError, OrderStatus } from '@ge
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import { Order } from '../models/order';
+import { natsWrapper } from './../nats-wrapper';
+import { OrderCancelledPublisher } from './../events/publishers/order-cancelled-publisher';
 
 const router = express.Router();
 
@@ -11,7 +13,7 @@ router.patch('/api/orders/:orderId', requireAuth, async (req: Request, res: Resp
         throw new NotFoundError();
     }
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('ticket');
     if (!order) {
         throw new NotFoundError();
     }
@@ -23,6 +25,12 @@ router.patch('/api/orders/:orderId', requireAuth, async (req: Request, res: Resp
     await order.save();
 
     //Publish an event
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+        id: order.id,
+        ticket: {
+            id: order.ticket.id
+        }
+    });
 
     res.status(204).send(order);
 });
