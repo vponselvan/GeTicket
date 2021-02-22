@@ -21,6 +21,11 @@ spec:
             backend:
               serviceName: tickets-serv
               servicePort: 3000
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: orders-serv
+              servicePort: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:
