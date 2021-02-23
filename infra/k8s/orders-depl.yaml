@@ -16,6 +16,8 @@ spec:
         - name: orders
           image: us.gcr.io/geticketapp/orders
           env:
+            - name: QUEUE_GROUP_NAME
+              value: 'orders-service'
             - name: EXPIRATION_WINDOW_SECONDS
               value: '900'
             - name: NATS_CLIENT_ID

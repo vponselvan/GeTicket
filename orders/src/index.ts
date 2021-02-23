@@ -1,6 +1,8 @@
 import { natsWrapper } from './nats-wrapper';
 import mongoose from "mongoose";
 import { app } from "./app";
+import { TicketCreatedSubscriber } from './events/subscribers/ticket-created-subscriber';
+import { TicketUpdatedSubscriber } from './events/subscribers/ticket-updated-subscriber';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -22,6 +24,9 @@ const start = async () => {
     if (!process.env.EXPIRATION_WINDOW_SECONDS) {
         throw new Error('EXPIRATION_WINDOW_SECONDS must be defined');
     }
+    if (!process.env.QUEUE_GROUP_NAME) {
+        throw new Error('QUEUE_GROUP_NAME must be defined');
+    }
 
     try {
         await natsWrapper.connect(process.env.NATS_CLUSTER_ID, process.env.NATS_CLIENT_ID, process.env.NATS_URL);
@@ -31,6 +36,10 @@ const start = async () => {
         });
         process.on('SIGINT', () => natsWrapper.client.close());
         process.on('SIGTERM', () => natsWrapper.client.close());
+
+        new TicketCreatedSubscriber(natsWrapper.client).subscribe();
+        new TicketUpdatedSubscriber(natsWrapper.client).subscribe();
+
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
