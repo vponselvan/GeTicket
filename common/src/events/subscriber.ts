@@ -22,7 +22,7 @@ export abstract class Subscriber<T extends Event> {
             .setAckWait(this.ackWait)
     }
 
-    subcribe() {
+    subscribe() {
         const subscription = this._client.subscribe(this.subject, this.queueGroupName, this.subscriptionOptions());
         subscription.on('message', (msg: Message) => {
             console.log(`Message Received: ${this.subject}/${this.queueGroupName}`);
