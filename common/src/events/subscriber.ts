@@ -7,7 +7,7 @@ export abstract class Subscriber<T extends Event> {
     abstract queueGroupName: string;
     abstract onMessage(data: T['data'], msg: Message): void;
 
-    private _client: Stan;
+    protected _client: Stan;
     protected ackWait = 5 * 1000; //5Sec 
 
     constructor(client: Stan) {
