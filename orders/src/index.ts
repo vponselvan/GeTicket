@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { TicketCreatedSubscriber } from './events/subscribers/ticket-created-subscriber';
 import { TicketUpdatedSubscriber } from './events/subscribers/ticket-updated-subscriber';
+import { ExpirationCompleteSubscriber } from './events/subscribers/expiration-complete-subscriber';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -39,6 +40,7 @@ const start = async () => {
 
         new TicketCreatedSubscriber(natsWrapper.client).subscribe();
         new TicketUpdatedSubscriber(natsWrapper.client).subscribe();
+        new ExpirationCompleteSubscriber(natsWrapper.client).subscribe();
 
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,

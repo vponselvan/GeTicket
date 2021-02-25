@@ -1,3 +1,4 @@
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import mongoose from 'mongoose';
 import { Order, OrderStatus } from './order';
 
@@ -34,18 +35,20 @@ const ticketSchema = new mongoose.Schema<TicketDoc>({
             delete ret._id;
         }
     },
-    versionKey: 'version',
-    optimisticConcurrency: true
+    versionKey: 'version'
+    //optimisticConcurrency: true
 });
 
 // To configure the version number increaments. If the data come from another DB with different version sequence.
-// ticketSchema.pre('save', function(done) {
+// ticketSchema.pre('save', function (done) {
 //     this.$where = {
-//         version: this.get('version') - 1;
+//         version: this.get('version') + 1
 //     };
 
 //     done();
 // });
+
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 ticketSchema.statics.findByEvent = (event: { id: string, version: number }) => {
     return Ticket.findOne({

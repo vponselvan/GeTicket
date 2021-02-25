@@ -1,3 +1,4 @@
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { OrderStatus } from "@geticket/common";
 import mongoose from "mongoose";
 import { TicketDoc } from "./ticket";
@@ -41,8 +42,18 @@ const orderSchema = new mongoose.Schema<OrderDoc>({
         }
     },
     versionKey: 'version',
-    optimisticConcurrency: true
+    //optimisticConcurrency: true
 });
+
+orderSchema.plugin(updateIfCurrentPlugin);
+
+// orderSchema.pre('save', function (done) {
+//     this.$where = {
+//         version: this.get('version') + 1
+//     };
+
+//     done();
+// });
 
 const OrderModel = mongoose.model<OrderDoc>('Order', orderSchema);
 

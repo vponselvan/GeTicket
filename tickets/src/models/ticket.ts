@@ -34,11 +34,19 @@ const ticketSchema = new mongoose.Schema<TicketDoc>({
         }
     },
     versionKey: 'version',
-    optimisticConcurrency: true
+    // optimisticConcurrency: true
 });
 
+// ticketSchema.pre('save', function (done) {
+//     this.$where = {
+//         version: this.get('version') + 1
+//     };
+
+//     done();
+// });
+
 // ticketSchema.set('versionKey', 'version');
-// ticketSchema.plugin(updateIfCurrentPlugin);
+ticketSchema.plugin(updateIfCurrentPlugin);
 
 const TicketModel = mongoose.model<TicketDoc>('Ticket', ticketSchema);
 
