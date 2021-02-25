@@ -16,6 +16,8 @@ spec:
         - name: tickets
           image: us.gcr.io/geticketapp/tickets
           env:
+            - name: QUEUE_GROUP_NAME
+              value: 'tickets-service'
             - name: NATS_CLIENT_ID
               valueFrom:
                 fieldRef:

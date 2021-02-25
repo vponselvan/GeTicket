@@ -7,7 +7,7 @@ interface TicketAttrs {
     userId: string;
 };
 
-type TicketDoc = mongoose.Document & TicketAttrs & { version: number };
+type TicketDoc = mongoose.Document & TicketAttrs & { version: number; orderId?: string; };
 
 const ticketSchema = new mongoose.Schema<TicketDoc>({
     title: {
@@ -21,6 +21,9 @@ const ticketSchema = new mongoose.Schema<TicketDoc>({
     userId: {
         type: String,
         required: true
+    },
+    orderId: {
+        type: String
     }
 }, {
     toJSON: {

@@ -1,3 +1,4 @@
+import { createTicket } from './../../test/create-ticket';
 import { natsWrapper } from './../../nats-wrapper';
 import request from 'supertest';
 import { app } from '../../app';
@@ -15,10 +16,7 @@ it('returns 404 if the ticket doesnt exist', async () => {
 });
 
 it('returns an error if the ticket is locked', async () => {
-    const ticket = new Ticket({
-        title: 'Ticket to Ride',
-        price: 50
-    });
+    const ticket = await createTicket();
     await ticket.save();
 
     const order = new Order({
@@ -37,10 +35,7 @@ it('returns an error if the ticket is locked', async () => {
 });
 
 it('reserves a ticket', async () => {
-    const ticket = new Ticket({
-        title: 'Ticket to Ride',
-        price: 50
-    });
+    const ticket = await createTicket();
     await ticket.save();
 
     await request(app)
@@ -51,10 +46,7 @@ it('reserves a ticket', async () => {
 });
 
 it('emits an event when an order is created', async () => {
-    const ticket = new Ticket({
-        title: 'Ticket to Ride',
-        price: 50
-    });
+    const ticket = await createTicket();
     await ticket.save();
 
     await request(app)

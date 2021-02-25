@@ -8,11 +8,13 @@ interface TicketAttrs {
 }
 
 export type TicketDoc = mongoose.Document & TicketAttrs & {
+    version: number;
     isLocked(): Promise<boolean>;
 };
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
     build(attrs: TicketAttrs): TicketDoc;
+    findByEvent(event: { id: string, version: number }): Promise<TicketDoc | null>;
 }
 
 const ticketSchema = new mongoose.Schema<TicketDoc>({
@@ -31,8 +33,26 @@ const ticketSchema = new mongoose.Schema<TicketDoc>({
             ret.id = ret._id;
             delete ret._id;
         }
-    }
+    },
+    versionKey: 'version',
+    optimisticConcurrency: true
 });
+
+// To configure the version number increaments. If the data come from another DB with different version sequence.
+// ticketSchema.pre('save', function(done) {
+//     this.$where = {
+//         version: this.get('version') - 1;
+//     };
+
+//     done();
+// });
+
+ticketSchema.statics.findByEvent = (event: { id: string, version: number }) => {
+    return Ticket.findOne({
+        _id: event.id,
+        version: event.version - 1
+    });
+};
 
 ticketSchema.statics.build = (attrs: TicketAttrs) => {
     return new Ticket({

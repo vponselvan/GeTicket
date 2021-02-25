@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+import { Ticket } from './../../models/ticket';
 import { natsWrapper } from './../../nats-wrapper';
 import request from 'supertest';
 import { app } from '../../app';
@@ -142,4 +144,30 @@ it('publishes an event when the ticket is updated', async () => {
         .expect(200);
 
     expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it('returns 400 if the ticket is being purchased', async () => {
+    const cookie = getCookie();
+
+    const response = await request(app)
+        .post('/api/tickets')
+        .set('Cookie', cookie)
+        .send({
+            title: 'Ticket to Ride',
+            price: 20
+        })
+        .expect(201);
+
+    const ticket = await Ticket.findById(response.body.id);
+    ticket?.set({ orderId: new mongoose.Types.ObjectId().toHexString() });
+    await ticket?.save();
+
+    await request(app)
+        .put(`/api/tickets/${response.body.id}`)
+        .set('Cookie', cookie)
+        .send({
+            title: '',
+            price: 50
+        })
+        .expect(400);
 });

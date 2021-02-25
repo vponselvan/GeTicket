@@ -1,6 +1,8 @@
 import { natsWrapper } from './nats-wrapper';
 import mongoose from "mongoose";
 import { app } from "./app";
+import { OrderCreatedSubscriber } from './events/subscribers/order-created-subscriber';
+import { OrderCancelledSubscriber } from './events/subscribers/order-cancelled-subscriber';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -19,6 +21,9 @@ const start = async () => {
     if (!process.env.NATS_CLIENT_ID) {
         throw new Error('NATS_CLIENT_ID must be defined');
     }
+    if (!process.env.QUEUE_GROUP_NAME) {
+        throw new Error('QUEUE_GROUP_NAME must be defined');
+    }
 
     try {
         await natsWrapper.connect(process.env.NATS_CLUSTER_ID, process.env.NATS_CLIENT_ID, process.env.NATS_URL);
@@ -28,6 +33,10 @@ const start = async () => {
         });
         process.on('SIGINT', () => natsWrapper.client.close());
         process.on('SIGTERM', () => natsWrapper.client.close());
+
+        new OrderCreatedSubscriber(natsWrapper.client).subscribe();
+        new OrderCancelledSubscriber(natsWrapper.client).subscribe();
+
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,

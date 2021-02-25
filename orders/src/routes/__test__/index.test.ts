@@ -4,11 +4,9 @@ import { app } from '../../app';
 import { getCookie } from '../../test/get-cookie';
 
 it('fetches all the orders for an user', async () => {
-    const title = 'Ticket to Ride';
-    const price = 50;
-    const ticketOne = await createTicket(title, price);
-    const ticketTwo = await createTicket(title, price);
-    const ticketThree = await createTicket(title, price);
+    const ticketOne = await createTicket();
+    const ticketTwo = await createTicket();
+    const ticketThree = await createTicket();
 
     const userOneCookie = getCookie();
     const userTwoCookie = getCookie();

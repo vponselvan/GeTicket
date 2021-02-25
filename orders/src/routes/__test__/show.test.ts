@@ -4,9 +4,7 @@ import { app } from '../../app';
 import { getCookie } from '../../test/get-cookie';
 
 it('fetches all the orders for an user', async () => {
-    const title = 'Ticket to Ride';
-    const price = 50;
-    const ticket = await createTicket(title, price);
+    const ticket = await createTicket();
 
     const userCookie = getCookie();
 
@@ -26,9 +24,7 @@ it('fetches all the orders for an user', async () => {
 });
 
 it('returns unathorized error if another user access the order', async () => {
-    const title = 'Ticket to Ride';
-    const price = 50;
-    const ticket = await createTicket(title, price);
+    const ticket = await createTicket();
 
     const userCookie = getCookie();
 

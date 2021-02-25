@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
-import { NotFoundError, validateRequest, requireAuth, NotAuthorizedError } from '@geticket/common';
+import { NotFoundError, validateRequest, requireAuth, NotAuthorizedError, BadRequestError } from '@geticket/common';
 import mongoose from 'mongoose';
 import { Ticket } from '../models/ticket';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
@@ -34,6 +34,10 @@ router.put('/api/tickets/:id', requireAuth, [
             throw new NotAuthorizedError();
         }
 
+        if (ticket.orderId) {
+            throw new BadRequestError('Ticket is being purchased');
+        }
+
         ticket.set({
             title: req.body.title,
             price: req.body.price
@@ -44,6 +48,7 @@ router.put('/api/tickets/:id', requireAuth, [
             title: ticket.title,
             price: ticket.price,
             id: ticket.id,
+            version: ticket.version,
             userId: ticket.userId
         });
 

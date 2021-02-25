@@ -6,9 +6,7 @@ import { getCookie } from '../../test/get-cookie';
 import { OrderStatus } from '@geticket/common';
 
 it('updates order to cancelled', async () => {
-    const title = 'Ticket to Ride';
-    const price = 50;
-    const ticket = await createTicket(title, price);
+    const ticket = await createTicket();
 
     const userCookie = getCookie();
 
@@ -33,9 +31,7 @@ it('updates order to cancelled', async () => {
 });
 
 it('publish an cancel event when an order is cancelled', async () => {
-    const title = 'Ticket to Ride';
-    const price = 50;
-    const ticket = await createTicket(title, price);
+    const ticket = await createTicket();
 
     const userCookie = getCookie();
 

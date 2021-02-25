@@ -11,7 +11,9 @@ interface OrderAttrs {
     ticket: TicketDoc;
 }
 
-type OrderDoc = mongoose.Document & OrderAttrs;
+type OrderDoc = mongoose.Document & OrderAttrs & {
+    version: number;
+};
 
 const orderSchema = new mongoose.Schema<OrderDoc>({
     userId: {
@@ -37,7 +39,9 @@ const orderSchema = new mongoose.Schema<OrderDoc>({
             ret.id = ret._id;
             delete ret._id;
         }
-    }
+    },
+    versionKey: 'version',
+    optimisticConcurrency: true
 });
 
 const OrderModel = mongoose.model<OrderDoc>('Order', orderSchema);
