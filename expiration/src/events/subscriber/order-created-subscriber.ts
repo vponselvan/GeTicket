@@ -13,7 +13,7 @@ export class OrderCreatedSubscriber extends Subscriber<OrderCreatedEvent> {
         await expirationQueue.add({
             orderId: data.id
         }, {
-            delay
+            delay: 60000 //hard coded for testing
         });
 
         msg.ack();

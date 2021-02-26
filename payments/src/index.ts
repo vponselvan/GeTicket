@@ -1,10 +1,8 @@
 import { natsWrapper } from './nats-wrapper';
 import mongoose from "mongoose";
 import { app } from "./app";
-import { TicketCreatedSubscriber } from './events/subscribers/ticket-created-subscriber';
-import { TicketUpdatedSubscriber } from './events/subscribers/ticket-updated-subscriber';
-import { ExpirationCompleteSubscriber } from './events/subscribers/expiration-complete-subscriber';
-import { PaymentCreatedSubscriber } from './events/subscribers/payment-created-subscriber';
+import { OrderCreatedSubscriber } from './events/subscribers/order-created-subscriber';
+import { OrderCancelledSubscriber } from './events/subscribers/order-cancelled-subscriber';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -23,9 +21,6 @@ const start = async () => {
     if (!process.env.NATS_CLIENT_ID) {
         throw new Error('NATS_CLIENT_ID must be defined');
     }
-    if (!process.env.EXPIRATION_WINDOW_SECONDS) {
-        throw new Error('EXPIRATION_WINDOW_SECONDS must be defined');
-    }
     if (!process.env.QUEUE_GROUP_NAME) {
         throw new Error('QUEUE_GROUP_NAME must be defined');
     }
@@ -39,10 +34,8 @@ const start = async () => {
         process.on('SIGINT', () => natsWrapper.client.close());
         process.on('SIGTERM', () => natsWrapper.client.close());
 
-        new TicketCreatedSubscriber(natsWrapper.client).subscribe();
-        new TicketUpdatedSubscriber(natsWrapper.client).subscribe();
-        new ExpirationCompleteSubscriber(natsWrapper.client).subscribe();
-        new PaymentCreatedSubscriber(natsWrapper.client).subscribe();
+        new OrderCreatedSubscriber(natsWrapper.client).subscribe();
+        new OrderCancelledSubscriber(natsWrapper.client).subscribe();
 
         await mongoose.connect(process.env.MONGO_URI, {
             useNewUrlParser: true,

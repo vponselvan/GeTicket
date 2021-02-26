@@ -50,4 +50,13 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: us.gcr.io/geticketapp/payments
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
+
             
