@@ -1,0 +1,27 @@
+name: deploy-manifests
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'infra/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+      
+      - name: Setup doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+          
+      - name: Configure Context
+        run: doctl kubernetes cluster kubeconfig save geticket
+        
+      - name: Apply all the deployments
+        run: kubectl apply -f infra/k8s
