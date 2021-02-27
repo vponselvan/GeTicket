@@ -1,0 +1,39 @@
+name: deploy-client
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'client/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: cd client && docker build -t scarvps/client .
+
+      - name: Docker Login
+        run: docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_NAME: ${{ secrets.DOCKER_NAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish the Docker image
+        run: docker push scarvps/client
+      
+      - name: Setup doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+          
+      - name: Configure Context
+        run: doctl kubernetes cluster kubeconfig save geticket
+        
+      - name: Deploy the latest image
+        run: kubectl rollout restart deployment client-depl

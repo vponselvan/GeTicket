@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    #kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: geticket.com
+      http:
+        paths:
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: payments-serv
+              servicePort: 3000
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: auth-serv
+              servicePort: 3000
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: tickets-serv
+              servicePort: 3000
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: orders-serv
+              servicePort: 3000
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              serviceName: client-serv
+              servicePort: 3000

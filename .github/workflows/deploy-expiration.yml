@@ -1,0 +1,39 @@
+name: deploy-expiration
+
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - 'expiration/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: cd expiration && docker build -t scarvps/expiration .
+
+      - name: Docker Login
+        run: docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_NAME: ${{ secrets.DOCKER_NAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Publish the Docker image
+        run: docker push scarvps/expiration
+      
+      - name: Setup doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+          
+      - name: Configure Context
+        run: doctl kubernetes cluster kubeconfig save geticket
+        
+      - name: Deploy the latest image
+        run: kubectl rollout restart deployment expiration-depl
