@@ -7,6 +7,8 @@ import { ExpirationCompleteSubscriber } from './events/subscribers/expiration-co
 import { PaymentCreatedSubscriber } from './events/subscribers/payment-created-subscriber';
 
 const start = async () => {
+    console.log('Starting up orders...');
+
     if (!process.env.JWT_KEY) {
         throw new Error('JWT_KEY must be defined');
     }
@@ -23,6 +25,7 @@ const start = async () => {
     if (!process.env.NATS_CLIENT_ID) {
         throw new Error('NATS_CLIENT_ID must be defined');
     }
+
     if (!process.env.EXPIRATION_WINDOW_SECONDS) {
         throw new Error('EXPIRATION_WINDOW_SECONDS must be defined');
     }

@@ -2,6 +2,7 @@ import { OrderCreatedSubscriber } from './events/subscriber/order-created-subscr
 import { natsWrapper } from './nats-wrapper';
 
 const start = async () => {
+    console.log('Starting up expiration...');
 
     if (!process.env.NATS_CLUSTER_ID) {
         throw new Error('NATS_CLUSTER_ID must be defined');
