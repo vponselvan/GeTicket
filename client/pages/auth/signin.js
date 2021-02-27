@@ -19,7 +19,7 @@ export default () => {
   };
 
   return (
-    <div className="container">
+    <div>
       <form onSubmit={onSubmit}>
         <h1>Sign In</h1>
         <div className="form-group">

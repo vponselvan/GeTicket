@@ -1,16 +1,41 @@
-import buildClient from '../api/build-client';
+import Link from 'next/link';
 
-const LandingPage = ({ currentUser }) => {
+const LandingPage = ({ currentUser, tickets }) => {
+  const ticketList = tickets.map((ticket) => {
+    const buttonText = ticket.orderId ? 'Sold' : 'Details';
+    return (
+      <div className="col-4" key={ticket.id}>
+        <div className="card" styleName="width: 18rem;">
+          <div className="card-body">
+            <h5 className="card-title">{ticket.title}</h5>
+            <h6 className="card-subtitle mb-2 text-muted">${ticket.price}</h6>
+            <Link href="/tickets/[ticketId]" as={`/tickets/${ticket.id}`}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={ticket.orderId}
+              >
+                {buttonText}
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  });
+
   return (
-    <h1>{currentUser ? 'Welcome User!' : 'Hey Guest, Please Sign IN!'}</h1>
+    <div>
+      <h1>Tickets</h1>
+      <div className="row">{ticketList}</div>
+    </div>
   );
 };
 
-LandingPage.getInitialProps = async (context) => {
-  const client = buildClient(context);
-  const { data } = await client.get('/api/users/currentuser');
+LandingPage.getInitialProps = async (context, client, currentUser) => {
+  const { data } = await client.get('/api/tickets');
 
-  return data;
+  return { tickets: data };
 };
 
 export default LandingPage;
