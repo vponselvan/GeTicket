@@ -6,55 +6,41 @@ import { natsWrapper } from "../../../nats-wrapper";
 import { OrderCancelledSubscriber } from "../order-cancelled-subscriber";
 import { Ticket } from '../../../models/ticket';
 
-
 const setup = async () => {
+    const listener = new OrderCancelledSubscriber(natsWrapper.client);
 
-    const subscriber = new OrderCancelledSubscriber(natsWrapper.client);
-
-    const ticket = await (await createTicket('Ticket to Ride', 50)).body;
+    const orderId = mongoose.Types.ObjectId().toHexString();
+    const ticket = new Ticket({
+        title: 'concert',
+        price: 20,
+        userId: 'asdf',
+    });
+    ticket.set({ orderId });
+    await ticket.save();
 
     const data: OrderCancelledEvent['data'] = {
-        id: new mongoose.Types.ObjectId().toHexString(),
+        id: orderId,
         version: 0,
         ticket: {
-            id: ticket.id
-        }
+            id: ticket.id,
+        },
     };
 
-    //@ts-ignore
+    // @ts-ignore
     const msg: Message = {
-        ack: jest.fn()
-    }
+        ack: jest.fn(),
+    };
 
-    return { subscriber, data, msg, ticket };
+    return { msg, data, ticket, orderId, listener };
 };
 
-it('sets the order id of the ticket to undefined', async () => {
-    const { subscriber, data, msg, ticket } = await setup();
+it('updates the ticket, publishes an event, and acks the message', async () => {
+    const { msg, data, ticket, orderId, listener } = await setup();
 
-    await subscriber.onMessage(data, msg);
+    await listener.onMessage(data, msg);
 
     const updatedTicket = await Ticket.findById(ticket.id);
-
-    expect(updatedTicket!.orderId).toEqual(undefined);
-});
-
-it('acks the message', async () => {
-    const { subscriber, data, msg } = await setup();
-
-    await subscriber.onMessage(data, msg);
-
+    expect(updatedTicket!.orderId).not.toBeDefined();
     expect(msg.ack).toHaveBeenCalled();
-});
-
-it('publishes ticket updated event', async () => {
-    const { subscriber, data, msg } = await setup();
-
-    await subscriber.onMessage(data, msg);
-
     expect(natsWrapper.client.publish).toHaveBeenCalled();
-
-    const ticketUpdated = JSON.parse((natsWrapper.client.publish as jest.Mock).mock.calls[0][1]);
-
-    expect(data.id).toEqual(ticketUpdated.orderId);
 });
