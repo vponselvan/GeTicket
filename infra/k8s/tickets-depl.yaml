@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tickets
-          image: us.gcr.io/geticketapp/tickets
+          image: scarvps/tickets #us.gcr.io/geticketapp/tickets
           env:
             - name: QUEUE_GROUP_NAME
               value: 'tickets-service'

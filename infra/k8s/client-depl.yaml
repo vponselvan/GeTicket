@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: us.gcr.io/geticketapp/client
+          image: scarvps/client #us.gcr.io/geticketapp/client
           env:
             - name: JWT_KEY
               valueFrom:

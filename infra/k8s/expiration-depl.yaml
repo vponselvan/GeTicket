@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: expiration
-          image: us.gcr.io/geticketapp/expiration
+          image: scarvps/expiration #us.gcr.io/geticketapp/expiration
           env:
             - name: QUEUE_GROUP_NAME
               value: 'expiration-service'

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: payments
-          image: us.gcr.io/geticketapp/payments
+          image: scarvps/payments #us.gcr.io/geticketapp/payments
           env:
             - name: QUEUE_GROUP_NAME
               value: 'payments-service'
