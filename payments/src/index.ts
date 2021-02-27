@@ -5,6 +5,8 @@ import { OrderCreatedSubscriber } from './events/subscribers/order-created-subsc
 import { OrderCancelledSubscriber } from './events/subscribers/order-cancelled-subscriber';
 
 const start = async () => {
+    console.log('Starting up payments...');
+
     if (!process.env.JWT_KEY) {
         throw new Error('JWT_KEY must be defined');
     }

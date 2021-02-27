@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-const LandingPage = ({ currentUser, tickets }) => {
+const LandingPage = ({ tickets }) => {
   const ticketList = tickets.map((ticket) => {
     const buttonText = ticket.orderId ? 'Sold' : 'Details';
     return (

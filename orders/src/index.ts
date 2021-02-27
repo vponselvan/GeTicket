@@ -7,7 +7,7 @@ import { ExpirationCompleteSubscriber } from './events/subscribers/expiration-co
 import { PaymentCreatedSubscriber } from './events/subscribers/payment-created-subscriber';
 
 const start = async () => {
-    console.log('starting up orders...');
+    console.log('Starting up orders...');
 
     if (!process.env.JWT_KEY) {
         throw new Error('JWT_KEY must be defined');
