@@ -4,7 +4,7 @@ const LandingPage = ({ tickets }) => {
   const ticketList = tickets.map((ticket) => {
     const buttonText = ticket.orderId ? 'Sold' : 'Details';
     return (
-      <div className="col-4" key={ticket.id}>
+      <div className="col-4 mb-3" key={ticket.id}>
         <div className="card" styleName="width: 18rem;">
           <div className="card-body">
             <h5 className="card-title">{ticket.title}</h5>
